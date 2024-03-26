@@ -148,23 +148,23 @@ public class DefaultDrawingView extends JComponent implements DrawingView, Edita
   @Override
   public void repaintHandles() {
     validateHandles();
-    Rectangle r = null;
+    Rectangle drawingArea = null;
     for (Handle h : getSelectionHandles()) {
-      if (r == null) {
-        r = h.getDrawingArea();
+      if (drawingArea == null) {
+        drawingArea = h.getDrawingArea();
       } else {
-        r.add(h.getDrawingArea());
+        drawingArea.add(h.getDrawingArea());
       }
     }
     for (Handle h : getSecondaryHandles()) {
-      if (r == null) {
-        r = h.getDrawingArea();
+      if (drawingArea == null) {
+        drawingArea = h.getDrawingArea();
       } else {
-        r.add(h.getDrawingArea());
+        drawingArea.add(h.getDrawingArea());
       }
     }
-    if (r != null) {
-      repaint(r);
+    if (drawingArea != null) {
+      repaint(drawingArea);
     }
   }
 
