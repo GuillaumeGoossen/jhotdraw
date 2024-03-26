@@ -35,6 +35,8 @@ import org.jhotdraw.draw.figure.Figure;
 /** This abstract class can be extended to implement a {@link Handle}. */
 public abstract class AbstractHandle implements Handle {
 
+  private static final int ANTIALIASING_GROWTH = 2;
+
   protected final FigureListener FIGURE_LISTENER =
       new FigureListenerAdapter() {
         /**
@@ -113,7 +115,9 @@ public abstract class AbstractHandle implements Handle {
   @Override
   public Rectangle getDrawingArea() {
     Rectangle r = getBounds();
-    r.grow(2, 2); // grow by two pixels to take antialiasing into account
+    r.grow(
+        ANTIALIASING_GROWTH,
+        ANTIALIASING_GROWTH); // grow by two pixels to take antialiasing into account
     return r;
   }
 
