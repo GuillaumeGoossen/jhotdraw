@@ -7,12 +7,7 @@
  */
 package org.jhotdraw.draw.handle;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -32,19 +27,17 @@ import org.jhotdraw.draw.event.HandleEvent;
 import org.jhotdraw.draw.event.HandleListener;
 import org.jhotdraw.draw.figure.Figure;
 
-/** This abstract class can be extended to implement a {@link Handle}. */
 public abstract class AbstractHandle implements Handle {
-
   private static final int ANTIALIASING_GROWTH = 2;
+
+  protected EventListenerList listenerList = new EventListenerList();
+  protected DrawingView view;
+  private Rectangle bounds;
+  private final Figure owner;
+  private String toolTipText;
 
   protected final FigureListener FIGURE_LISTENER =
       new FigureListenerAdapter() {
-        /**
-         * Sent when a region used by the figure needs to be repainted. The implementation of this
-         * method assumes that the handle is located on the bounds of the figure or inside the
-         * figure. If the handle is located elsewhere this method must be reimpleted by the
-         * subclass.
-         */
         @Override
         public void areaInvalidated(FigureEvent evt) {
           updateBounds();
@@ -55,12 +48,6 @@ public abstract class AbstractHandle implements Handle {
           updateBounds();
         }
       };
-
-  protected EventListenerList listenerList = new EventListenerList();
-  protected DrawingView view;
-  private Rectangle bounds;
-  private final Figure owner;
-  private String toolTipText;
 
   public AbstractHandle(Figure owner) {
     if (owner == null) {
@@ -98,7 +85,6 @@ public abstract class AbstractHandle implements Handle {
         getEditor().getHandleAttribute(HandleAttributeKeys.HANDLE_STROKE_COLOR));
   }
 
-  /** Gets and caches actual handles bounds. The computation itself is done in basicGetBounds. */
   @Override
   public final Rectangle getBounds() {
     if (bounds == null) {
@@ -153,10 +139,6 @@ public abstract class AbstractHandle implements Handle {
     bounds = null;
   }
 
-  /**
-   * Returns true, if the given handle is an instance of the same class or of a subclass of this
-   * handle,.
-   */
   @Override
   public boolean isCombinableWith(Handle handle) {
     return getClass().isAssignableFrom(handle.getClass());
