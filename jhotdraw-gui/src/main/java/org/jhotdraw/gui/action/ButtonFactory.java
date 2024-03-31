@@ -82,7 +82,7 @@ import org.jhotdraw.draw.action.DrawingColorChooserHandler;
 import org.jhotdraw.draw.action.DrawingColorIcon;
 import org.jhotdraw.draw.action.EditorColorChooserAction;
 import org.jhotdraw.draw.action.EditorColorIcon;
-import org.jhotdraw.draw.action.GroupAction;
+import org.jhotdraw.draw.action.GroupFiguresAction;
 import org.jhotdraw.draw.action.LineDecorationIcon;
 import org.jhotdraw.draw.action.MoveAction;
 import org.jhotdraw.draw.action.PickAttributesAction;
@@ -376,7 +376,7 @@ public class ButtonFactory {
     List<Action> a = new ArrayList<>();
     a.add(new DuplicateAction());
     a.add(null); // separator
-    a.add(new GroupAction(editor));
+    a.add(new GroupFiguresAction(editor));
     a.add(new UngroupAction(editor));
     a.add(null); // separator
     a.add(new BringToFrontAction(editor));

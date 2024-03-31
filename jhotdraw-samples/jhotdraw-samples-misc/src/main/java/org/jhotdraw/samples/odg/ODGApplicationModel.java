@@ -82,7 +82,7 @@ public class ODGApplicationModel extends DefaultApplicationModel {
     LinkedList<Action> a = new LinkedList<Action>();
     a.add(new DuplicateAction());
     a.add(null); // separator
-    a.add(new GroupAction(editor, new ODGGroupFigure()));
+    a.add(new GroupFiguresAction(editor, new ODGGroupFigure()));
     a.add(new UngroupAction(editor, new ODGGroupFigure()));
     a.add(new CombineAction(editor));
     a.add(new SplitAction(editor));

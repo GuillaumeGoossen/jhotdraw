@@ -219,7 +219,7 @@ public class ToolsToolBar extends AbstractToolBar {
     AbstractSelectedAction a;
     list.add(new DuplicateAction());
     list.add(null); // separator
-    list.add(a = new GroupAction(editor, new SVGGroupFigure()));
+    list.add(a = new GroupFiguresAction(editor, new SVGGroupFigure()));
     disposables.add(a);
     list.add(a = new UngroupAction(editor, new SVGGroupFigure()));
     disposables.add(a);

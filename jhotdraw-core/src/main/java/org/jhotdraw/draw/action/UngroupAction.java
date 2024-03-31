@@ -13,7 +13,7 @@ import org.jhotdraw.draw.figure.GroupFigure;
 import org.jhotdraw.util.ResourceBundleUtil;
 
 /** UngroupAction. */
-public class UngroupAction extends GroupAction {
+public class UngroupAction extends GroupFiguresAction {
 
   private static final long serialVersionUID = 1L;
   public static final String ID = "edit.ungroupSelection";

@@ -1,5 +1,5 @@
 /*
- * @(#)GroupAction.java
+ * @(#)GroupFiguresAction.java
  *
  * Copyright (c) 1996-2010 The authors and contributors of JHotDraw.
  * You may not use, copy or modify this file, except in compliance with the
@@ -21,8 +21,8 @@ import org.jhotdraw.draw.figure.Figure;
 import org.jhotdraw.draw.figure.GroupFigure;
 import org.jhotdraw.util.ResourceBundleUtil;
 
-/** GroupAction. */
-public class GroupAction extends AbstractSelectedAction {
+/** GroupFiguresAction. */
+public class GroupFiguresAction extends AbstractSelectedAction {
 
   private static final long serialVersionUID = 1L;
   public static final String ID = "edit.groupSelection";
@@ -34,15 +34,16 @@ public class GroupAction extends AbstractSelectedAction {
    */
   private boolean isGroupingAction;
 
-  public GroupAction(DrawingEditor editor) {
+  public GroupFiguresAction(DrawingEditor editor) {
     this(editor, new GroupFigure(), true);
   }
 
-  public GroupAction(DrawingEditor editor, CompositeFigure prototype) {
+  public GroupFiguresAction(DrawingEditor editor, CompositeFigure prototype) {
     this(editor, prototype, true);
   }
 
-  public GroupAction(DrawingEditor editor, CompositeFigure prototype, boolean isGroupingAction) {
+  public GroupFiguresAction(
+      DrawingEditor editor, CompositeFigure prototype, boolean isGroupingAction) {
     super(editor);
     this.prototype = prototype;
     this.isGroupingAction = isGroupingAction;

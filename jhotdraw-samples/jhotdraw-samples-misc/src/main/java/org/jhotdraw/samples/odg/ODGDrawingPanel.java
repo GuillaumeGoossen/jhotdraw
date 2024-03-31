@@ -61,7 +61,7 @@ public class ODGDrawingPanel extends JPanel {
     labels.configureToolBarButton(pb, "actions");
     pb.add(new DuplicateAction());
     pb.addSeparator();
-    pb.add(new GroupAction(editor));
+    pb.add(new GroupFiguresAction(editor));
     pb.add(new UngroupAction(editor));
     pb.addSeparator();
     pb.add(new BringToFrontAction(editor));
@@ -134,7 +134,7 @@ public class ODGDrawingPanel extends JPanel {
     LinkedList<Action> a = new LinkedList<Action>();
     a.add(new DuplicateAction());
     a.add(null); // separator
-    a.add(new GroupAction(editor, new SVGGroupFigure()));
+    a.add(new GroupFiguresAction(editor, new SVGGroupFigure()));
     a.add(new UngroupAction(editor, new SVGGroupFigure()));
     a.add(new CombineAction(editor));
     a.add(new SplitAction(editor));

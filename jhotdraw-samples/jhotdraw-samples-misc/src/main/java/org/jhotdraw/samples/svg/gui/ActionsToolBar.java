@@ -172,7 +172,7 @@ public class ActionsToolBar extends AbstractToolBar {
       pb.removeAll();
       pb.add(new DuplicateAction());
       pb.addSeparator();
-      pb.add(d = new GroupAction(editor, new SVGGroupFigure()));
+      pb.add(d = new GroupFiguresAction(editor, new SVGGroupFigure()));
       disposables.add(d);
       pb.add(d = new UngroupAction(editor, new SVGGroupFigure()));
       disposables.add(d);

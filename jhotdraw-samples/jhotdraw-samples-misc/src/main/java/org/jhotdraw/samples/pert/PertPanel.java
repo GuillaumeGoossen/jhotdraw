@@ -56,7 +56,7 @@ public class PertPanel extends JPanel {
     labels.configureToolBarButton(pb, "actions");
     pb.add(new DuplicateAction());
     pb.addSeparator();
-    pb.add(new GroupAction(editor));
+    pb.add(new GroupFiguresAction(editor));
     pb.add(new UngroupAction(editor));
     pb.addSeparator();
     pb.add(new BringToFrontAction(editor));

@@ -16,7 +16,7 @@ import org.jhotdraw.samples.odg.figures.ODGPathFigure;
 import org.jhotdraw.util.*;
 
 /** CombinePathsAction. */
-public class CombineAction extends GroupAction {
+public class CombineAction extends GroupFiguresAction {
 
   private static final long serialVersionUID = 1L;
   public static final String ID = "edit.combinePaths";

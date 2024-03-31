@@ -83,7 +83,7 @@ public class SVGApplicationModel extends DefaultApplicationModel {
     AbstractSelectedAction action;
     ActionMap m = view.getActionMap();
     m.put(SelectSameAction.ID, new SelectSameAction(editor));
-    m.put(GroupAction.ID, new GroupAction(editor, new SVGGroupFigure()));
+    m.put(GroupFiguresAction.ID, new GroupFiguresAction(editor, new SVGGroupFigure()));
     m.put(UngroupAction.ID, new UngroupAction(editor, new SVGGroupFigure()));
     m.put(CombineAction.ID, new CombineAction(editor));
     m.put(SplitAction.ID, new SplitAction(editor));
@@ -112,7 +112,7 @@ public class SVGApplicationModel extends DefaultApplicationModel {
       editor = (v == null) ? null : v.getEditor();
     }
     m.put(SelectSameAction.ID, new SelectSameAction(editor));
-    m.put(GroupAction.ID, new GroupAction(editor, new SVGGroupFigure()));
+    m.put(GroupFiguresAction.ID, new GroupFiguresAction(editor, new SVGGroupFigure()));
     m.put(UngroupAction.ID, new UngroupAction(editor, new SVGGroupFigure()));
     m.put(CombineAction.ID, new CombineAction(editor));
     m.put(SplitAction.ID, new SplitAction(editor));
@@ -135,7 +135,7 @@ public class SVGApplicationModel extends DefaultApplicationModel {
       @Override
       public void addOtherEditItems(JMenu m, Application app, View v) {
         ActionMap am = app.getActionMap(v);
-        m.add(am.get(GroupAction.ID));
+        m.add(am.get(GroupFiguresAction.ID));
         m.add(am.get(UngroupAction.ID));
         m.add(am.get(CombineAction.ID));
         m.add(am.get(SplitAction.ID));
