@@ -42,159 +42,90 @@ public class SlantedLiner implements Liner {
     if (start == null || end == null || path == null) {
       return;
     }
-    // Special treatment if the connection connects the same figure
+
     if (figure.getStartFigure() == figure.getEndFigure()) {
-      // Ensure path has exactly four nodes
-      while (path.size() < 5) {
-        path.add(1, new BezierPath.Node(0, 0));
-      }
-      while (path.size() > 5) {
-        path.remove(1);
-      }
-      Point2D.Double sp = start.findStart(figure);
-      Point2D.Double ep = end.findEnd(figure);
-      Rectangle2D.Double sb = start.getBounds();
-      Rectangle2D.Double eb = end.getBounds();
-      int soutcode = sb.outcode(sp);
-      if (soutcode == 0) {
-        soutcode = Geom.outcode(sb, eb);
-      }
-      int eoutcode = eb.outcode(ep);
-      if (eoutcode == 0) {
-        eoutcode = Geom.outcode(sb, eb);
-      }
-      path.nodes().get(0).moveTo(sp);
-      path.nodes().get(path.size() - 1).moveTo(ep);
-      switch (soutcode) {
-        case Geom.OUT_TOP:
-          eoutcode = Geom.OUT_LEFT;
-          break;
-        case Geom.OUT_RIGHT:
-          eoutcode = Geom.OUT_TOP;
-          break;
-        case Geom.OUT_BOTTOM:
-          eoutcode = Geom.OUT_RIGHT;
-          break;
-        case Geom.OUT_LEFT:
-          eoutcode = Geom.OUT_BOTTOM;
-          break;
-        default:
-          eoutcode = Geom.OUT_TOP;
-          soutcode = Geom.OUT_RIGHT;
-          break;
-      }
-      path.nodes().get(1).moveTo(sp.x + slantSize, sp.y);
-      if ((soutcode & Geom.OUT_RIGHT) != 0) {
-        path.nodes().get(1).moveTo(sp.x + slantSize, sp.y);
-      } else if ((soutcode & Geom.OUT_LEFT) != 0) {
-        path.nodes().get(1).moveTo(sp.x - slantSize, sp.y);
-      } else if ((soutcode & Geom.OUT_BOTTOM) != 0) {
-        path.nodes().get(1).moveTo(sp.x, sp.y + slantSize);
-      } else {
-        path.nodes().get(1).moveTo(sp.x, sp.y - slantSize);
-      }
-      if ((eoutcode & Geom.OUT_RIGHT) != 0) {
-        path.nodes().get(3).moveTo(ep.x + slantSize, ep.y);
-      } else if ((eoutcode & Geom.OUT_LEFT) != 0) {
-        path.nodes().get(3).moveTo(ep.x - slantSize, ep.y);
-      } else if ((eoutcode & Geom.OUT_BOTTOM) != 0) {
-        path.nodes().get(3).moveTo(ep.x, ep.y + slantSize);
-      } else {
-        path.nodes().get(3).moveTo(ep.x, ep.y - slantSize);
-      }
-      switch (soutcode) {
-        case Geom.OUT_RIGHT:
-          path.nodes().get(2).moveTo(path.nodes().get(1).x[0], path.nodes().get(3).y[0]);
-          break;
-        case Geom.OUT_TOP:
-          path.nodes().get(2).moveTo(path.nodes().get(1).y[0], path.nodes().get(3).x[0]);
-          break;
-        case Geom.OUT_LEFT:
-          path.nodes().get(2).moveTo(path.nodes().get(1).x[0], path.nodes().get(3).y[0]);
-          break;
-        case Geom.OUT_BOTTOM:
-        default:
-          path.nodes().get(2).moveTo(path.nodes().get(1).y[0], path.nodes().get(3).x[0]);
-          break;
-      }
-      // Regular treatment if the connection connects to two different figures
+      handleSameFigure(start, end, path, figure);
     } else {
-      // Ensure path has exactly four nodes
-      while (path.size() < 4) {
-        path.add(1, new BezierPath.Node(0, 0));
-      }
-      while (path.size() > 4) {
-        path.remove(1);
-      }
-      Point2D.Double sp = start.findStart(figure);
-      Point2D.Double ep = end.findEnd(figure);
-      Rectangle2D.Double sb = start.getBounds();
-      Rectangle2D.Double eb = end.getBounds();
-      int soutcode = sb.outcode(sp);
-      if (soutcode == 0) {
-        if (sp.x <= sb.x) {
-          soutcode = Geom.OUT_LEFT;
-        } else if (sp.y <= sb.y) {
-          soutcode = Geom.OUT_TOP;
-        } else if (sp.x >= sb.x + sb.width) {
-          soutcode = Geom.OUT_RIGHT;
-        } else if (sp.y >= sb.y + sb.height) {
-          soutcode = Geom.OUT_BOTTOM;
-        } else {
-          soutcode = Geom.outcode(sb, eb);
-        }
-      }
-      int eoutcode = eb.outcode(ep);
-      if (eoutcode == 0) {
-        if (ep.x <= eb.x) {
-          eoutcode = Geom.OUT_LEFT;
-        } else if (ep.y <= eb.y) {
-          eoutcode = Geom.OUT_TOP;
-        } else if (ep.x >= eb.x + eb.width) {
-          eoutcode = Geom.OUT_RIGHT;
-        } else if (ep.y >= eb.y + eb.height) {
-          eoutcode = Geom.OUT_BOTTOM;
-        } else {
-          eoutcode = Geom.outcode(sb, eb);
-        }
-      }
-      path.nodes().get(0).moveTo(sp);
-      path.nodes().get(path.size() - 1).moveTo(ep);
-      if ((soutcode & Geom.OUT_RIGHT) != 0) {
-        path.nodes().get(1).moveTo(sp.x + slantSize, sp.y);
-      } else if ((soutcode & Geom.OUT_LEFT) != 0) {
-        path.nodes().get(1).moveTo(sp.x - slantSize, sp.y);
-      } else if ((soutcode & Geom.OUT_BOTTOM) != 0) {
-        path.nodes().get(1).moveTo(sp.x, sp.y + slantSize);
-      } else {
-        path.nodes().get(1).moveTo(sp.x, sp.y - slantSize);
-      }
-      if ((eoutcode & Geom.OUT_RIGHT) != 0) {
-        path.nodes().get(2).moveTo(ep.x + slantSize, ep.y);
-      } else if ((eoutcode & Geom.OUT_LEFT) != 0) {
-        path.nodes().get(2).moveTo(ep.x - slantSize, ep.y);
-      } else if ((eoutcode & Geom.OUT_BOTTOM) != 0) {
-        path.nodes().get(2).moveTo(ep.x, ep.y + slantSize);
-      } else {
-        path.nodes().get(2).moveTo(ep.x, ep.y - slantSize);
-      }
+      handleDifferentFigures(start, end, path, figure);
     }
-    // Ensure all path nodes are straight
+
     for (BezierPath.Node node : path.nodes()) {
       node.setMask(BezierPath.C0_MASK);
     }
     path.invalidatePath();
   }
 
-  //  @Override
-  //  public void read(DOMInput in) {
-  //    slantSize = in.getAttribute("slant", 20d);
-  //  }
+  private void handleSameFigure(
+      Connector start, Connector end, BezierPath path, ConnectionFigure figure) {
+    adjustPathSize(path, 5);
+    Point2D.Double sp = start.findStart(figure);
+    Point2D.Double ep = end.findEnd(figure);
+    Rectangle2D.Double sb = start.getBounds();
+    Rectangle2D.Double eb = end.getBounds();
+    int soutcode = determineOutcode(sb, sp, eb);
+    int eoutcode = determineOutcode(eb, ep, sb);
+    moveNodes(sp, ep, soutcode, eoutcode, path);
+  }
+
+  private void handleDifferentFigures(
+      Connector start, Connector end, BezierPath path, ConnectionFigure figure) {
+    adjustPathSize(path, 4);
+    Point2D.Double sp = start.findStart(figure);
+    Point2D.Double ep = end.findEnd(figure);
+    Rectangle2D.Double sb = start.getBounds();
+    Rectangle2D.Double eb = end.getBounds();
+    int soutcode = determineOutcode(sb, sp, eb);
+    int eoutcode = determineOutcode(eb, ep, sb);
+    moveNodes(sp, ep, soutcode, eoutcode, path);
+  }
+
+  private void adjustPathSize(BezierPath path, int size) {
+    while (path.size() < size) {
+      path.add(1, new BezierPath.Node(0, 0));
+    }
+    while (path.size() > size) {
+      path.remove(1);
+    }
+  }
+
+  private int determineOutcode(
+      Rectangle2D.Double bounds, Point2D.Double point, Rectangle2D.Double otherBounds) {
+    int outcode = bounds.outcode(point);
+    if (outcode == 0) {
+      outcode = Geom.outcode(bounds, otherBounds);
+    }
+    return outcode;
+  }
+
+  private void moveNodes(
+      Point2D.Double sp, Point2D.Double ep, int soutcode, int eoutcode, BezierPath path) {
+    path.nodes().get(0).moveTo(sp);
+    path.nodes().get(path.size() - 1).moveTo(ep);
+    moveNode(path.nodes().get(1), sp, soutcode);
+    moveNode(path.nodes().get(2), ep, eoutcode);
+  }
+
+  private void moveNode(BezierPath.Node node, Point2D.Double point, int outcode) {
+    if ((outcode & Geom.OUT_RIGHT) != 0) {
+      node.moveTo(point.x + slantSize, point.y);
+    } else if ((outcode & Geom.OUT_LEFT) != 0) {
+      node.moveTo(point.x - slantSize, point.y);
+    } else if ((outcode & Geom.OUT_BOTTOM) != 0) {
+      node.moveTo(point.x, point.y + slantSize);
+    } else {
+      node.moveTo(point.x, point.y - slantSize);
+    }
+  }
+
+  // @Override
+  // public void read(DOMInput in) {
+  // slantSize = in.getAttribute("slant", 20d);
+  // }
   //
-  //  @Override
-  //  public void write(DOMOutput out) {
-  //    out.addAttribute("slant", slantSize);
-  //  }
+  // @Override
+  // public void write(DOMOutput out) {
+  // out.addAttribute("slant", slantSize);
+  // }
 
   @Override
   public Liner clone() {
