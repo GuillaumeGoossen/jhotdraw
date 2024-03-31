@@ -32,6 +32,7 @@ import org.jhotdraw.draw.AttributeKeys;
 import org.jhotdraw.draw.DrawingView;
 import org.jhotdraw.draw.connector.ChopBezierConnector;
 import org.jhotdraw.draw.connector.Connector;
+import org.jhotdraw.draw.exception.NodeNotFoundException;
 import org.jhotdraw.draw.handle.BezierNodeHandle;
 import org.jhotdraw.draw.handle.BezierOutlineHandle;
 import org.jhotdraw.draw.handle.BezierScaleHandle;
@@ -485,10 +486,14 @@ public class BezierFigure extends AbstractAttributedFigure {
   }
 
   /**
-   * Finds a control point index. Returns -1 if no control point could be found. FIXME - Move this
-   * to BezierPath
+   * Returns the index of the node which is hit by the given Point2D.Double.
+   *
+   * @param p a Point on the bezier path
+   * @return the index of the node
+   * @throws NodeNotFoundException if no node is found for the given point
+   *     <p>FIXME - Move this to BezierPath
    */
-  public int findNode(Point2D.Double p) {
+  public int findNode(Point2D.Double p) throws NodeNotFoundException {
     BezierPath tp = path;
     for (int i = 0; i < tp.size(); i++) {
       BezierPath.Node p2 = tp.nodes().get(i);
@@ -496,7 +501,7 @@ public class BezierFigure extends AbstractAttributedFigure {
         return i;
       }
     }
-    return -1;
+    throw new NodeNotFoundException(p);
   }
 
   /**
