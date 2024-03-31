@@ -93,12 +93,12 @@ public class GroupFiguresAction extends AbstractSelectedAction {
               @Override
               public void redo() throws CannotRedoException {
                 super.redo();
-                groupFigures(view, group, ungroupedFigures);
+                groupSelectedFigures(view, group, ungroupedFigures);
               }
 
               @Override
               public void undo() throws CannotUndoException {
-                ungroupFigures(view, group);
+                ungroupSelectedFigures(view, group);
                 super.undo();
               }
 
@@ -107,7 +107,7 @@ public class GroupFiguresAction extends AbstractSelectedAction {
                 return super.addEdit(anEdit);
               }
             };
-        groupFigures(view, group, ungroupedFigures);
+        groupSelectedFigures(view, group, ungroupedFigures);
         fireUndoableEditHappened(edit);
       }
     } else {
@@ -130,22 +130,22 @@ public class GroupFiguresAction extends AbstractSelectedAction {
               @Override
               public void redo() throws CannotRedoException {
                 super.redo();
-                ungroupFigures(view, group);
+                ungroupSelectedFigures(view, group);
               }
 
               @Override
               public void undo() throws CannotUndoException {
-                groupFigures(view, group, ungroupedFigures);
+                groupSelectedFigures(view, group, ungroupedFigures);
                 super.undo();
               }
             };
-        ungroupedFigures.addAll(ungroupFigures(view, group));
+        ungroupedFigures.addAll(ungroupSelectedFigures(view, group));
         fireUndoableEditHappened(edit);
       }
     }
   }
 
-  public Collection<Figure> ungroupFigures(DrawingView view, CompositeFigure group) {
+  public Collection<Figure> ungroupSelectedFigures(DrawingView view, CompositeFigure group) {
     List<Figure> figures = new ArrayList<>(group.getChildren());
     view.clearSelection();
     group.basicRemoveAllChildren();
@@ -155,7 +155,8 @@ public class GroupFiguresAction extends AbstractSelectedAction {
     return figures;
   }
 
-  public void groupFigures(DrawingView view, CompositeFigure group, Collection<Figure> figures) {
+  public void groupSelectedFigures(
+      DrawingView view, CompositeFigure group, Collection<Figure> figures) {
     Collection<Figure> sorted = view.getDrawing().sort(figures);
     int index = view.getDrawing().indexOf(sorted.iterator().next());
     view.getDrawing().basicRemoveAll(figures);

@@ -44,7 +44,7 @@ public class CombineAction extends GroupFiguresAction {
 
   @Override
   @SuppressWarnings("unchecked")
-  public Collection<Figure> ungroupFigures(DrawingView view, CompositeFigure group) {
+  public Collection<Figure> ungroupSelectedFigures(DrawingView view, CompositeFigure group) {
     LinkedList<Figure> figures = new LinkedList<Figure>(group.getChildren());
     view.clearSelection();
     group.basicRemoveAllChildren();
@@ -66,7 +66,8 @@ public class CombineAction extends GroupFiguresAction {
 
   @Override
   @SuppressWarnings("unchecked")
-  public void groupFigures(DrawingView view, CompositeFigure group, Collection<Figure> figures) {
+  public void groupSelectedFigures(
+      DrawingView view, CompositeFigure group, Collection<Figure> figures) {
     Collection<Figure> sorted = view.getDrawing().sort(figures);
     view.getDrawing().basicRemoveAll(figures);
     view.clearSelection();
