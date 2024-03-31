@@ -168,16 +168,19 @@ public class BezierTool extends AbstractTool {
     return figure;
   }
 
-  @SuppressWarnings("unchecked")
   protected BezierFigure createFigure() {
     BezierFigure f = prototype.clone();
     getEditor().applyDefaultAttributesTo(f);
+    return f;
+  }
+
+  @SuppressWarnings("unchecked")
+  protected void applyAttributes(BezierFigure f, Map<AttributeKey<?>, Object> attributes) {
     if (attributes != null) {
       for (Map.Entry<AttributeKey<?>, Object> entry : attributes.entrySet()) {
         f.attr().set((AttributeKey<Object>) entry.getKey(), entry.getValue());
       }
     }
-    return f;
   }
 
   protected Figure getCreatedFigure() {
