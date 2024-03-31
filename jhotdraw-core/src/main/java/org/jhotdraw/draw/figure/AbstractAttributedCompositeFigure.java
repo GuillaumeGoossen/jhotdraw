@@ -251,17 +251,6 @@ public abstract class AbstractAttributedCompositeFigure extends AbstractAttribut
   }
 
   /**
-   * Removes all children.
-   *
-   * @see #add
-   */
-  public void basicRemoveAll(Collection<? extends Figure> figures) {
-    for (Figure f : figures) {
-      basicRemove(f);
-    }
-  }
-
-  /**
    * Sends a figure to the back of the composite figure.
    *
    * @param figure that is part of this composite figure
@@ -409,8 +398,8 @@ public abstract class AbstractAttributedCompositeFigure extends AbstractAttribut
   @Override
   public void layout(double scale) {
     // Note: We increase and below decrease the changing depth here,
-    //       because we want to ignore change events from our children
-    //       why we lay them out.
+    // because we want to ignore change events from our children
+    // why we lay them out.
     changingDepth++;
     for (Figure child : getChildren()) {
       if (child instanceof CompositeFigure) {
