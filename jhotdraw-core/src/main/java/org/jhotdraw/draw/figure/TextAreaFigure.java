@@ -113,7 +113,8 @@ public class TextAreaFigure extends AbstractAttributedDecoratedFigure implements
       float verticalPos = (float) textRect.y;
       float maxVerticalPos = (float) (textRect.y + textRect.height);
       if (leftMargin < rightMargin) {
-        // float tabWidth = (float) (getTabSize() * g.getFontMetrics(font).charWidth('m'));
+        // float tabWidth = (float) (getTabSize() *
+        // g.getFontMetrics(font).charWidth('m'));
         float tabWidth =
             (float) (getTabSize() * font.getStringBounds("m", getFontRenderContext()).getWidth());
         float[] tabStops = new float[(int) (textRect.width / tabWidth)];
@@ -134,16 +135,15 @@ public class TextAreaFigure extends AbstractAttributedDecoratedFigure implements
               as.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
             }
             int tabCount = paragraphs[i].split("\t").length - 1;
-            Rectangle2D.Double paragraphBounds =
-                drawParagraph(
-                    g2,
-                    as.getIterator(),
-                    verticalPos,
-                    maxVerticalPos,
-                    leftMargin,
-                    rightMargin,
-                    tabStops,
-                    tabCount);
+            ParagraphProperties properties = new ParagraphProperties();
+            properties.setStyledText(as.getIterator());
+            properties.setVerticalPos(verticalPos);
+            properties.setMaxVerticalPos(maxVerticalPos);
+            properties.setLeftMargin(leftMargin);
+            properties.setRightMargin(rightMargin);
+            properties.setTabStops(tabStops);
+            properties.setTabCount(tabCount);
+            Rectangle2D.Double paragraphBounds = drawParagraph(g2, properties);
             verticalPos = (float) (paragraphBounds.y + paragraphBounds.height);
             if (verticalPos > maxVerticalPos) {
               break;
@@ -162,24 +162,18 @@ public class TextAreaFigure extends AbstractAttributedDecoratedFigure implements
    *
    * @param g Graphics object. This parameter is null, if we want to measure the size of the
    *     paragraph.
-   * @param styledText the text of the paragraph.
-   * @param verticalPos the top bound of the paragraph
-   * @param maxVerticalPos the bottom bound of the paragraph
-   * @param leftMargin the left bound of the paragraph
-   * @param rightMargin the right bound of the paragraph
-   * @param tabStops an array with tab stops
-   * @param tabCount the number of entries in tabStops which contain actual values
+   * @param properties The properties of the paragraph, including the text, vertical bounds,
+   *     margins, and tab stops.
    * @return Returns the actual bounds of the paragraph.
    */
-  private Rectangle2D.Double drawParagraph(
-      Graphics2D g,
-      AttributedCharacterIterator styledText,
-      float verticalPos,
-      float maxVerticalPos,
-      float leftMargin,
-      float rightMargin,
-      float[] tabStops,
-      int tabCount) {
+  private Rectangle2D.Double drawParagraph(Graphics2D g, ParagraphProperties properties) {
+    AttributedCharacterIterator styledText = properties.getStyledText();
+    float verticalPos = properties.getVerticalPos();
+    float maxVerticalPos = properties.getMaxVerticalPos();
+    float leftMargin = properties.getLeftMargin();
+    float rightMargin = properties.getRightMargin();
+    float[] tabStops = properties.getTabStops();
+    int tabCount = properties.getTabCount();
     // This method is based on the code sample given
     // in the class comment of java.awt.font.LineBreakMeasurer,
     // assume styledText is an AttributedCharacterIterator, and the number
@@ -196,12 +190,12 @@ public class TextAreaFigure extends AbstractAttributedDecoratedFigure implements
     }
     tabLocations[tabCount] = styledText.getEndIndex() - 1;
     // Now tabLocations has an entry for every tab's offset in
-    // the text.  For convenience, the last entry is tabLocations
+    // the text. For convenience, the last entry is tabLocations
     // is the offset of the last character in the text.
     LineBreakMeasurer measurer = new LineBreakMeasurer(styledText, getFontRenderContext());
     int currentTab = 0;
     while (measurer.getPosition() < styledText.getEndIndex() && verticalPos <= maxVerticalPos) {
-      // Lay out and draw each line.  All segments on a line
+      // Lay out and draw each line. All segments on a line
       // must be computed before any drawing can occur, since
       // we must know the largest ascent on the line.
       // TextLayouts are computed and stored in a List;
@@ -507,16 +501,15 @@ public class TextAreaFigure extends AbstractAttributedDecoratedFigure implements
             as.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
           }
           int tabCount = paragraphs[i].split("\t").length - 1;
-          Rectangle2D.Double paragraphBounds =
-              drawParagraph(
-                  null,
-                  as.getIterator(),
-                  verticalPos,
-                  maxVerticalPos,
-                  leftMargin,
-                  rightMargin,
-                  tabStops,
-                  tabCount);
+          ParagraphProperties properties = new ParagraphProperties();
+          properties.setStyledText(as.getIterator());
+          properties.setVerticalPos(verticalPos);
+          properties.setMaxVerticalPos(maxVerticalPos);
+          properties.setLeftMargin(leftMargin);
+          properties.setRightMargin(rightMargin);
+          properties.setTabStops(tabStops);
+          properties.setTabCount(tabCount);
+          Rectangle2D.Double paragraphBounds = drawParagraph(null, properties);
           verticalPos = (float) (paragraphBounds.y + paragraphBounds.height);
           textRect.add(paragraphBounds);
         }
