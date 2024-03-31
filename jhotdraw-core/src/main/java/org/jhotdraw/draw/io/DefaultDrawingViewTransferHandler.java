@@ -7,10 +7,6 @@
  */
 package org.jhotdraw.draw.io;
 
-import static javax.swing.TransferHandler.COPY;
-import static javax.swing.TransferHandler.MOVE;
-import static javax.swing.TransferHandler.NONE;
-
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
@@ -47,7 +43,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 import javax.swing.TransferHandler;
-import javax.swing.TransferHandler.TransferSupport;
 import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
@@ -124,47 +119,19 @@ public class DefaultDrawingViewTransferHandler extends TransferHandler {
           if (System.getProperty("os.name").toLowerCase().startsWith("mac")) {
             // Search for a suitable input format
             SearchLoop:
-            for (InputFormat format : drawing.getInputFormats()) {
-              for (DataFlavor flavor : transferFlavors) {
-                if (format.isDataFlavorSupported(flavor)) {
-                  List<Figure> existingFigures = new ArrayList<>(drawing.getChildren());
-                  try {
-                    format.read(t, drawing, false);
-                    final List<Figure> importedFigures = new ArrayList<>(drawing.getChildren());
-                    importedFigures.removeAll(existingFigures);
-                    view.clearSelection();
-                    view.addToSelection(importedFigures);
-                    transferFigures.addAll(importedFigures);
-                    moveToDropPoint(comp, transferFigures, dropPoint);
-                    drawing.fireUndoableEditHappened(
-                        new AbstractUndoableEdit() {
-                          private static final long serialVersionUID = 1L;
-
-                          @Override
-                          public String getPresentationName() {
-                            ResourceBundleUtil labels =
-                                ResourceBundleUtil.getBundle("org.jhotdraw.draw.Labels");
-                            return labels.getString("edit.paste.text");
-                          }
-
-                          @Override
-                          public void undo() throws CannotUndoException {
-                            super.undo();
-                            drawing.removeAll(importedFigures);
-                          }
-
-                          @Override
-                          public void redo() throws CannotRedoException {
-                            super.redo();
-                            drawing.addAll(importedFigures);
-                          }
-                        });
-                    retValue = true;
-                    break SearchLoop;
-                  } catch (IOException e) {
-                    e.printStackTrace();
-                    // failed to read transferalbe, try with next InputFormat
-                  }
+            for (DataFlavor flavor : transferFlavors) {
+              for (InputFormat format : drawing.getInputFormats()) {
+                if (handleFormat(
+                    (JComponent) comp,
+                    flavor,
+                    format,
+                    t,
+                    drawing,
+                    view,
+                    new ArrayList<>(transferFigures),
+                    dropPoint)) {
+                  retValue = true;
+                  break SearchLoop;
                 }
               }
             }
@@ -173,45 +140,17 @@ public class DefaultDrawingViewTransferHandler extends TransferHandler {
             SearchLoop:
             for (DataFlavor flavor : transferFlavors) {
               for (InputFormat format : drawing.getInputFormats()) {
-                if (format.isDataFlavorSupported(flavor)) {
-                  List<Figure> existingFigures = new ArrayList<>(drawing.getChildren());
-                  try {
-                    format.read(t, drawing, false);
-                    final List<Figure> importedFigures = new ArrayList<>(drawing.getChildren());
-                    importedFigures.removeAll(existingFigures);
-                    view.clearSelection();
-                    view.addToSelection(importedFigures);
-                    transferFigures.addAll(importedFigures);
-                    moveToDropPoint(comp, transferFigures, dropPoint);
-                    drawing.fireUndoableEditHappened(
-                        new AbstractUndoableEdit() {
-                          private static final long serialVersionUID = 1L;
-
-                          @Override
-                          public String getPresentationName() {
-                            ResourceBundleUtil labels =
-                                ResourceBundleUtil.getBundle("org.jhotdraw.draw.Labels");
-                            return labels.getString("edit.paste.text");
-                          }
-
-                          @Override
-                          public void undo() throws CannotUndoException {
-                            super.undo();
-                            drawing.removeAll(importedFigures);
-                          }
-
-                          @Override
-                          public void redo() throws CannotRedoException {
-                            super.redo();
-                            drawing.addAll(importedFigures);
-                          }
-                        });
-                    retValue = true;
-                    break SearchLoop;
-                  } catch (IOException e) {
-                    e.printStackTrace();
-                    // failed to read transferalbe, try with next InputFormat
-                  }
+                if (handleFormat(
+                    (JComponent) comp,
+                    flavor,
+                    format,
+                    t,
+                    drawing,
+                    view,
+                    new ArrayList<>(transferFigures),
+                    dropPoint)) {
+                  retValue = true;
+                  break SearchLoop;
                 }
               }
             }
@@ -228,7 +167,6 @@ public class DefaultDrawingViewTransferHandler extends TransferHandler {
               @Override
               protected List<Figure> doInBackground() throws Exception {
                 for (File file : files) {
-                  FileFormatLoop:
                   for (InputFormat format : drawing.getInputFormats()) {
                     if (file.isFile() && format.getFileFilter().accept(file)) {
                       format.read(file.toURI(), drawing, false);
@@ -291,6 +229,60 @@ public class DefaultDrawingViewTransferHandler extends TransferHandler {
     return retValue;
   }
 
+  /*
+   * This method is called, when the user drops a Transferable onto the component.
+   */
+  private boolean handleFormat(
+      JComponent comp,
+      DataFlavor flavor,
+      InputFormat format,
+      Transferable t,
+      Drawing drawing,
+      DrawingView view,
+      List<Figure> transferFigures,
+      Point dropPoint) {
+    if (format.isDataFlavorSupported(flavor)) {
+      List<Figure> existingFigures = new ArrayList<>(drawing.getChildren());
+      try {
+        format.read(t, drawing, false);
+        final List<Figure> importedFigures = new ArrayList<>(drawing.getChildren());
+        importedFigures.removeAll(existingFigures);
+        view.clearSelection();
+        view.addToSelection(importedFigures);
+        transferFigures.addAll(importedFigures);
+        moveToDropPoint(comp, new HashSet<>(transferFigures), dropPoint);
+        drawing.fireUndoableEditHappened(
+            new AbstractUndoableEdit() {
+              private static final long serialVersionUID = 1L;
+
+              @Override
+              public String getPresentationName() {
+                ResourceBundleUtil labels =
+                    ResourceBundleUtil.getBundle("org.jhotdraw.draw.Labels");
+                return labels.getString("edit.paste.text");
+              }
+
+              @Override
+              public void undo() throws CannotUndoException {
+                super.undo();
+                drawing.removeAll(importedFigures);
+              }
+
+              @Override
+              public void redo() throws CannotRedoException {
+                super.redo();
+                drawing.addAll(importedFigures);
+              }
+            });
+        return true;
+      } catch (IOException | UnsupportedFlavorException e) {
+        e.printStackTrace();
+        // failed to read transferable, try with next InputFormat
+      }
+    }
+    return false;
+  }
+
   protected void moveToDropPoint(
       JComponent component, HashSet<Figure> transferFigures, Point dropPoint) {
     if (dropPoint == null) {
@@ -316,7 +308,8 @@ public class DefaultDrawingViewTransferHandler extends TransferHandler {
         AffineTransform t = new AffineTransform();
         t.translate(-drawingArea.x, -drawingArea.y);
         t.translate(drawingDropPoint.x, drawingDropPoint.y);
-        // XXX - instead of centering, we have to translate by the drag image offset here
+        // XXX - instead of centering, we have to translate by the drag image offset
+        // here
         t.translate(drawingArea.width / -2d, drawingArea.height / -2d);
         for (Figure fig : transferFigures) {
           fig.willChange();
@@ -549,7 +542,7 @@ public class DefaultDrawingViewTransferHandler extends TransferHandler {
         scrolls = c.getAutoscrolls();
         c.setAutoscrolls(false);
         try {
-          //                    dge.startDrag(null, t, this);
+          // dge.startDrag(null, t, this);
           Icon icon = th.getVisualRepresentation(t);
           Image dragImage;
           if (icon instanceof ImageIcon) {
