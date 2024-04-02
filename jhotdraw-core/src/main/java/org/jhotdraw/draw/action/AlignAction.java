@@ -10,21 +10,25 @@ package org.jhotdraw.draw.action;
 import java.awt.geom.*;
 import java.util.*;
 import org.jhotdraw.draw.DrawingEditor;
+import org.jhotdraw.draw.action.alignment.AlignmentStrategy;
 import org.jhotdraw.draw.event.TransformEdit;
 import org.jhotdraw.draw.figure.Figure;
 import org.jhotdraw.undo.CompositeEdit;
 import org.jhotdraw.util.ResourceBundleUtil;
 
 public class AlignAction extends AbstractSelectedAction {
-
+  private final AlignmentStrategy alignmentStrategy;
   private static final long serialVersionUID = 1L;
   protected ResourceBundleUtil labels = ResourceBundleUtil.getBundle("org.jhotdraw.draw.Labels");
-  private final Alignment alignment;
 
-  public AlignAction(DrawingEditor editor, Alignment alignment) {
+  public AlignAction(DrawingEditor editor, AlignmentStrategy alignmentStrategy) {
     super(editor);
-    this.alignment = alignment;
+    this.alignmentStrategy = alignmentStrategy;
     updateEnabledState();
+  }
+
+  public void triggerUndoableEditHappened(TransformEdit edit) {
+    fireUndoableEditHappened(edit);
   }
 
   @Override
@@ -44,15 +48,6 @@ public class AlignAction extends AbstractSelectedAction {
     fireUndoableEditHappened(edit);
   }
 
-  public enum Alignment {
-    NORTH,
-    EAST,
-    WEST,
-    SOUTH,
-    VERTICAL,
-    HORIZONTAL
-  }
-
   protected Rectangle2D.Double getSelectionBounds() {
     Rectangle2D.Double bounds = null;
     for (Figure f : getView().getSelectedFigures()) {
@@ -67,119 +62,6 @@ public class AlignAction extends AbstractSelectedAction {
 
   protected void alignFigures(
       Collection<Figure> selectedFigures, Rectangle2D.Double selectionBounds) {
-    switch (alignment) {
-      case NORTH:
-        alignNorth(selectedFigures, selectionBounds);
-        break;
-      case EAST:
-        alignEast(selectedFigures, selectionBounds);
-        break;
-      case WEST:
-        alignWest(selectedFigures, selectionBounds);
-        break;
-      case SOUTH:
-        alignSouth(selectedFigures, selectionBounds);
-        break;
-      case VERTICAL:
-        alignVertical(selectedFigures, selectionBounds);
-        break;
-      case HORIZONTAL:
-        alignHorizontal(selectedFigures, selectionBounds);
-        break;
-    }
-  }
-
-  protected void alignNorth(
-      Collection<Figure> selectedFigures, Rectangle2D.Double selectionBounds) {
-    double y = selectionBounds.y;
-    for (Figure f : selectedFigures) {
-      if (f.isTransformable()) {
-        f.willChange();
-        Rectangle2D.Double b = f.getBounds();
-        AffineTransform tx = new AffineTransform();
-        tx.translate(0, y - b.y);
-        f.transform(tx);
-        f.changed();
-        fireUndoableEditHappened(new TransformEdit(f, tx));
-      }
-    }
-  }
-
-  protected void alignEast(Collection<Figure> selectedFigures, Rectangle2D.Double selectionBounds) {
-    double x = selectionBounds.x + selectionBounds.width;
-    for (Figure f : selectedFigures) {
-      if (f.isTransformable()) {
-        f.willChange();
-        Rectangle2D.Double b = f.getBounds();
-        AffineTransform tx = new AffineTransform();
-        tx.translate(x - b.x - b.width, 0);
-        f.transform(tx);
-        f.changed();
-        fireUndoableEditHappened(new TransformEdit(f, tx));
-      }
-    }
-  }
-
-  protected void alignWest(Collection<Figure> selectedFigures, Rectangle2D.Double selectionBounds) {
-    double x = selectionBounds.x;
-    for (Figure f : selectedFigures) {
-      if (f.isTransformable()) {
-        f.willChange();
-        Rectangle2D.Double b = f.getBounds();
-        AffineTransform tx = new AffineTransform();
-        tx.translate(x - b.x, 0);
-        f.transform(tx);
-        f.changed();
-        fireUndoableEditHappened(new TransformEdit(f, tx));
-      }
-    }
-  }
-
-  protected void alignSouth(
-      Collection<Figure> selectedFigures, Rectangle2D.Double selectionBounds) {
-    double y = selectionBounds.y + selectionBounds.height;
-    for (Figure f : selectedFigures) {
-      if (f.isTransformable()) {
-        f.willChange();
-        Rectangle2D.Double b = f.getBounds();
-        AffineTransform tx = new AffineTransform();
-        tx.translate(0, y - b.y - b.height);
-        f.transform(tx);
-        f.changed();
-        fireUndoableEditHappened(new TransformEdit(f, tx));
-      }
-    }
-  }
-
-  protected void alignVertical(
-      Collection<Figure> selectedFigures, Rectangle2D.Double selectionBounds) {
-    double y = selectionBounds.y + selectionBounds.height / 2;
-    for (Figure f : selectedFigures) {
-      if (f.isTransformable()) {
-        f.willChange();
-        Rectangle2D.Double b = f.getBounds();
-        AffineTransform tx = new AffineTransform();
-        tx.translate(0, y - b.y - b.height / 2);
-        f.transform(tx);
-        f.changed();
-        fireUndoableEditHappened(new TransformEdit(f, tx));
-      }
-    }
-  }
-
-  protected void alignHorizontal(
-      Collection<Figure> selectedFigures, Rectangle2D.Double selectionBounds) {
-    double x = selectionBounds.x + selectionBounds.width / 2;
-    for (Figure f : selectedFigures) {
-      if (f.isTransformable()) {
-        f.willChange();
-        Rectangle2D.Double b = f.getBounds();
-        AffineTransform tx = new AffineTransform();
-        tx.translate(x - b.x - b.width / 2, 0);
-        f.transform(tx);
-        f.changed();
-        fireUndoableEditHappened(new TransformEdit(f, tx));
-      }
-    }
+    alignmentStrategy.align(selectedFigures, selectionBounds);
   }
 }

@@ -95,6 +95,12 @@ import org.jhotdraw.draw.action.StrokeIcon;
 import org.jhotdraw.draw.action.UngroupAction;
 import org.jhotdraw.draw.action.ZoomAction;
 import org.jhotdraw.draw.action.ZoomEditorAction;
+import org.jhotdraw.draw.action.alignment.EastAlignmentStrategy;
+import org.jhotdraw.draw.action.alignment.HorizontalAlignmentStrategy;
+import org.jhotdraw.draw.action.alignment.NorthAlignmentStrategy;
+import org.jhotdraw.draw.action.alignment.SouthAlignmentStrategy;
+import org.jhotdraw.draw.action.alignment.VerticalAlignmentStrategy;
+import org.jhotdraw.draw.action.alignment.WestAlignmentStrategy;
 import org.jhotdraw.draw.decoration.ArrowTip;
 import org.jhotdraw.draw.decoration.LineDecoration;
 import org.jhotdraw.draw.event.SelectionComponentRepainter;
@@ -1802,17 +1808,18 @@ public class ButtonFactory {
   public static void addAlignmentButtonsTo(
       JToolBar bar, final DrawingEditor editor, java.util.List<Disposable> dsp) {
     AbstractSelectedAction d;
-    bar.add(d = new AlignAction(editor, AlignAction.Alignment.WEST)).setFocusable(false);
+
+    bar.add(d = new AlignAction(editor, new WestAlignmentStrategy())).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction(editor, AlignAction.Alignment.EAST)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, new EastAlignmentStrategy())).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction(editor, AlignAction.Alignment.HORIZONTAL)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, new HorizontalAlignmentStrategy())).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction(editor, AlignAction.Alignment.NORTH)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, new NorthAlignmentStrategy())).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction(editor, AlignAction.Alignment.SOUTH)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, new SouthAlignmentStrategy())).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction(editor, AlignAction.Alignment.VERTICAL)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, new VerticalAlignmentStrategy())).setFocusable(false);
     dsp.add(d);
     bar.addSeparator();
     bar.add(d = new MoveAction.West(editor)).setFocusable(false);
