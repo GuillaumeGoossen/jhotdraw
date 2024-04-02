@@ -29,6 +29,7 @@ public class BezierControlPointHandle extends AbstractHandle {
   private Figure transformOwner;
   private BezierPath.Node oldNode;
 
+  // Constructors
   public BezierControlPointHandle(BezierFigure owner, int index, int coord) {
     this(owner, index, coord, owner);
   }
@@ -41,36 +42,12 @@ public class BezierControlPointHandle extends AbstractHandle {
     transformOwner.addFigureListener(FIGURE_LISTENER);
   }
 
+  // Public methods
   @Override
   public void dispose() {
     super.dispose();
     transformOwner.removeFigureListener(FIGURE_LISTENER);
     transformOwner = null;
-  }
-
-  protected BezierFigure getBezierFigure() {
-    return getOwner();
-  }
-
-  protected Figure getTransformOwner() {
-    return transformOwner;
-  }
-
-  @Override
-  protected Point2D.Double getDrawingLocation() {
-    if (getBezierFigure().getNodeCount() > index) {
-      Point2D.Double p = getBezierFigure().getPoint(index, controlPointIndex);
-      if (getTransformOwner().attr().get(TRANSFORM) != null) {
-        getTransformOwner().attr().get(TRANSFORM).transform(p, p);
-      }
-      return p;
-    } else {
-      return null;
-    }
-  }
-
-  protected BezierPath.Node getBezierNode() {
-    return getBezierFigure().getNodeCount() > index ? getBezierFigure().getNode(index) : null;
   }
 
   /** Draws this handle. */
@@ -184,16 +161,6 @@ public class BezierControlPointHandle extends AbstractHandle {
     }
     figure.changed();
     fireAreaInvalidated(figure.getNode(index));
-  }
-
-  private void fireAreaInvalidated(BezierPath.Node v) {
-    Rectangle2D.Double dr = new Rectangle2D.Double(v.x[0], v.y[0], 0, 0);
-    for (int i = 1; i < 3; i++) {
-      dr.add(v.x[i], v.y[i]);
-    }
-    Rectangle vr = view.drawingToView(dr);
-    vr.grow(getHandlesize(), getHandlesize());
-    fireAreaInvalidated(vr);
   }
 
   @Override
@@ -336,5 +303,42 @@ public class BezierControlPointHandle extends AbstractHandle {
         evt.consume();
         break;
     }
+  }
+
+  // Protected methods
+  protected BezierFigure getBezierFigure() {
+    return getOwner();
+  }
+
+  protected Figure getTransformOwner() {
+    return transformOwner;
+  }
+
+  @Override
+  protected Point2D.Double getDrawingLocation() {
+    if (getBezierFigure().getNodeCount() > index) {
+      Point2D.Double p = getBezierFigure().getPoint(index, controlPointIndex);
+      if (getTransformOwner().attr().get(TRANSFORM) != null) {
+        getTransformOwner().attr().get(TRANSFORM).transform(p, p);
+      }
+      return p;
+    } else {
+      return null;
+    }
+  }
+
+  protected BezierPath.Node getBezierNode() {
+    return getBezierFigure().getNodeCount() > index ? getBezierFigure().getNode(index) : null;
+  }
+
+  // Private methods
+  private void fireAreaInvalidated(BezierPath.Node v) {
+    Rectangle2D.Double dr = new Rectangle2D.Double(v.x[0], v.y[0], 0, 0);
+    for (int i = 1; i < 3; i++) {
+      dr.add(v.x[i], v.y[i]);
+    }
+    Rectangle vr = view.drawingToView(dr);
+    vr.grow(getHandlesize(), getHandlesize());
+    fireAreaInvalidated(vr);
   }
 }
