@@ -1802,17 +1802,17 @@ public class ButtonFactory {
   public static void addAlignmentButtonsTo(
       JToolBar bar, final DrawingEditor editor, java.util.List<Disposable> dsp) {
     AbstractSelectedAction d;
-    bar.add(d = new AlignAction.West(editor)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, AlignAction.Alignment.WEST)).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction.East(editor)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, AlignAction.Alignment.EAST)).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction.Horizontal(editor)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, AlignAction.Alignment.HORIZONTAL)).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction.North(editor)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, AlignAction.Alignment.NORTH)).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction.South(editor)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, AlignAction.Alignment.SOUTH)).setFocusable(false);
     dsp.add(d);
-    bar.add(d = new AlignAction.Vertical(editor)).setFocusable(false);
+    bar.add(d = new AlignAction(editor, AlignAction.Alignment.VERTICAL)).setFocusable(false);
     dsp.add(d);
     bar.addSeparator();
     bar.add(d = new MoveAction.West(editor)).setFocusable(false);
