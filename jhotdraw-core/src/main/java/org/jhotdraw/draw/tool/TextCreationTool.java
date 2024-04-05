@@ -15,7 +15,6 @@ import javax.swing.undo.UndoableEdit;
 import org.jhotdraw.draw.*;
 import org.jhotdraw.draw.figure.Figure;
 import org.jhotdraw.draw.figure.TextHolderFigure;
-import org.jhotdraw.draw.text.*;
 import org.jhotdraw.util.ResourceBundleUtil;
 
 /**
@@ -52,7 +51,7 @@ import org.jhotdraw.util.ResourceBundleUtil;
 public class TextCreationTool extends CreationTool implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private FloatingTextField textField;
+  private CustomTextField textField;
   private TextHolderFigure typingTarget;
 
   public TextCreationTool(TextHolderFigure prototype) {
@@ -97,7 +96,7 @@ public class TextCreationTool extends CreationTool implements ActionListener {
 
   protected void beginEdit(TextHolderFigure textHolder) {
     if (textField == null) {
-      textField = new FloatingTextField();
+      textField = new CustomTextField();
       textField.addActionListener(this);
     }
     if (textHolder != typingTarget && typingTarget != null) {
@@ -159,7 +158,7 @@ public class TextCreationTool extends CreationTool implements ActionListener {
       typingTarget = null;
       textField.endOverlay();
     }
-    //         view().checkDamage();
+    // view().checkDamage();
   }
 
   @Override

@@ -16,7 +16,6 @@ import javax.swing.undo.UndoableEdit;
 import org.jhotdraw.draw.*;
 import org.jhotdraw.draw.figure.Figure;
 import org.jhotdraw.draw.figure.TextHolderFigure;
-import org.jhotdraw.draw.text.*;
 import org.jhotdraw.geom.Insets2D;
 import org.jhotdraw.util.ResourceBundleUtil;
 
@@ -68,7 +67,7 @@ import org.jhotdraw.util.ResourceBundleUtil;
 public class TextAreaCreationTool extends CreationTool implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private FloatingTextArea textArea;
+  private CustomTextArea textArea;
   private TextHolderFigure typingTarget;
 
   /** Rubberband color of the tool. When this is null, the tool does not draw a rubberband. */
@@ -140,8 +139,7 @@ public class TextAreaCreationTool extends CreationTool implements ActionListener
 
   protected void beginEdit(TextHolderFigure textHolder) {
     if (textArea == null) {
-      textArea = new FloatingTextArea();
-      // textArea.addActionListener(this);
+      textArea = new CustomTextArea();
     }
     if (textHolder != typingTarget && typingTarget != null) {
       endEdit();

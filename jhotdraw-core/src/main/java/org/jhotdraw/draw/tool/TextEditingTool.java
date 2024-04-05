@@ -13,7 +13,6 @@ import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.UndoableEdit;
 import org.jhotdraw.draw.*;
 import org.jhotdraw.draw.figure.TextHolderFigure;
-import org.jhotdraw.draw.text.*;
 import org.jhotdraw.util.ResourceBundleUtil;
 
 /**
@@ -39,7 +38,7 @@ import org.jhotdraw.util.ResourceBundleUtil;
 public class TextEditingTool extends AbstractTool implements ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private FloatingTextField textField;
+  private CustomTextField textField;
   private TextHolderFigure typingTarget;
 
   public TextEditingTool(TextHolderFigure typingTarget) {
@@ -63,7 +62,7 @@ public class TextEditingTool extends AbstractTool implements ActionListener {
 
   protected void beginEdit(TextHolderFigure textHolder) {
     if (textField == null) {
-      textField = new FloatingTextField();
+      textField = new CustomTextField();
       textField.addActionListener(this);
     }
     if (textHolder != typingTarget && typingTarget != null) {
@@ -119,7 +118,7 @@ public class TextEditingTool extends AbstractTool implements ActionListener {
       typingTarget = null;
       textField.endOverlay();
     }
-    //         view().checkDamage();
+    // view().checkDamage();
   }
 
   @Override
